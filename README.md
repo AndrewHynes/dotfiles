@@ -1,4 +1,4 @@
 dotfiles
 ========
 
-My config and dotfiles for a tonne of programs. Free to use and study and do whatever.
+The dotfiles (and other config files) I use on a day to day basis for you to observe, look at, hopefully learn from, and other stuff.
