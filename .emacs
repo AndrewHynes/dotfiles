@@ -1,3 +1,17 @@
+;; ; (backward-char) C-b <- C-h is the help map (help-command)  
+;; ; (next-line) C-n     <- C-j is (newline-and-indent)         
+;; ; (previous-line) C-p <- C-k is (kill-line)                  
+;; ; (forward-char) C-f  <- C-l is (recenter-top-bottom)        
+(global-set-key "\C-b" 'help-command)                        
+(global-set-key "\C-n" 'newline-and-indent)                  
+(global-set-key "\C-p" 'kill-line)                           
+(global-set-key "\C-f" 'recenter-top-bottom)                 
+(global-set-key "\C-h" 'backward-char)                       
+(global-set-key "\C-j" 'next-line)                                                                                     
+(global-set-key "\C-k" 'previous-line)                       
+(global-set-key "\C-l" 'forward-char)                        
+
+
 ;;(setq inferior-lisp-program "clisp -modern -I")
 ;;require slime?
 
@@ -33,6 +47,8 @@
 
 (global-set-key [f6] 'tuareg-eval-buffer)
 
+(global-set-key "\C-w" 'backward-kill-word)
+
 (push
  (concat (substring (shell-command-to-string "opam config var share") 0 -1) "/emacs/site-lisp") load-path)
 (setq merlin-command (concat (substring (shell-command-to-string "opam config var bin") 0 -1) "/ocamlmerlin"))
@@ -40,7 +56,7 @@
 (add-hook 'tuareg-mode-hook 'merlin-mode)
 (add-hook 'caml-mode-hook 'merlin-mode)
   
-(add-to-list 'default-frame-alist '(alpha . (90 85)))
+(add-to-list 'default-frame-alist '(alpha . (85 80)))
 
     (cua-mode t)
     (setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
@@ -55,6 +71,60 @@
     '("marmalade" .
       "http://marmalade-repo.org/packages/"))
 (package-initialize)
+
+;;kindly taken from http://emacs-fu.blogspot.co.uk/2009/10/writing-presentations-with-org-mode-and.html
+;; #+LaTeX_CLASS: beamer in org files
+(unless (boundp 'org-export-latex-classes)
+  (setq org-export-latex-classes nil))
+(add-to-list 'org-export-latex-classes
+  ;; beamer class, for presentations
+  '("beamer"
+     "\\documentclass[11pt]{beamer}\n
+      \\mode<{{{beamermode}}}>\n
+      \\usetheme{{{{beamertheme}}}}\n
+      \\usecolortheme{{{{beamercolortheme}}}}\n
+      \\beamertemplateballitem\n
+      \\setbeameroption{show notes}
+      \\usepackage[utf8]{inputenc}\n
+      \\usepackage[T1]{fontenc}\n
+      \\usepackage{hyperref}\n
+      \\usepackage{color}
+      \\usepackage{listings}
+      \\lstset{numbers=none,language=[ISO]C++,tabsize=4,
+  frame=single,
+  basicstyle=\\small,
+  showspaces=false,showstringspaces=false,
+  showtabs=false,
+  keywordstyle=\\color{blue}\\bfseries,
+  commentstyle=\\color{red},
+  }\n
+      \\usepackage{verbatim}\n
+      \\institute{{{{beamerinstitute}}}}\n          
+       \\subject{{{{beamersubject}}}}\n"
+
+     ("\\section{%s}" . "\\section*{%s}")
+     
+     ("\\begin{frame}[fragile]\\frametitle{%s}"
+       "\\end{frame}"
+       "\\begin{frame}[fragile]\\frametitle{%s}"
+       "\\end{frame}")))
+
+  ;; letter class, for formal letters
+
+  (add-to-list 'org-export-latex-classes
+
+  '("letter"
+     "\\documentclass[11pt]{letter}\n
+      \\usepackage[utf8]{inputenc}\n
+      \\usepackage[T1]{fontenc}\n
+      \\usepackage{color}"
+     
+     ("\\section{%s}" . "\\section*{%s}")
+     ("\\subsection{%s}" . "\\subsection*{%s}")
+     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
 
 ;;;NOT MY LISP! Sent to me by a friend for use in my .emacs.
 ;;PRETTY COLORS MODE START
@@ -126,7 +196,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(agda2-include-dirs (quote ("./ /usr/lib/agda")))
  '(exec-path (quote ("/home/andrew/.opam/system/bin" "/home/andrew/.opam/system/bin" "/usr/lib/lightdm/lightdm" "/usr/local/sbin" "/usr/local/bin" "/usr/sbin" "/usr/bin" "/sbin" "/bin" "/usr/games" "/usr/local/games" "/usr/lib/emacs/24.2/x86_64-linux-gnu" "/home/andrew/.cabal/bin")))
+ '(haskell-mode-hook (quote (turn-on-haskell-simple-indent)))
  '(send-mail-function (quote smtpmail-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -145,3 +217,8 @@
 
 (rainbow-delimiters-mode t)
 (pretty-colors-mode t)
+
+(load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
+
+;;To make use of the Agda standard library, add /usr/lib/agda to the Agda search path, either using the --include-path flag or by customising the Emacs mode variable agda2-include-dirs (M-x customize-group RET agda2 RET).
+
