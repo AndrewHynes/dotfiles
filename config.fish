@@ -38,6 +38,7 @@ alias update-grub='grub-mkconfig -o /boot/grub/grub.cfg'
 
 alias dl-audio="youtube-dl -x --audio-format "mp3" -o '/home/andrew/Music/%(title)s-%(id)s.%(ext)s'"
 
+alias clip="xclip -se c"
 
 set PATH ~/.cabal/bin $PATH
 
@@ -55,8 +56,11 @@ function removewhitespace
 	rm mvfiles
 end
 
-set fish_greeting ""
+function search
+        aura -Ss $argv
+	aura -As $argv
+end
 
-clear
+set fish_greeting ""
 
 fortune -a
