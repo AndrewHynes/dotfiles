@@ -9,8 +9,36 @@
 (global-set-key "\C-h" 'backward-char)                       
 (global-set-key "\C-j" 'next-line)                                                                                     
 (global-set-key "\C-k" 'previous-line)                       
-(global-set-key "\C-l" 'forward-char)                        
+(global-set-key "\C-l" 'forward-char)      
 
+;;relative line numbers -
+;;adapted from https://stackoverflow.com/questions/6874516/relative-line-numbers-in-emacs
+
+(defvar my-linum-format-string "%3d")
+
+(add-hook 'linum-before-numbering-hook 'my-linum-get-format-string)
+
+(defun my-linum-get-format-string ()
+  (let* ((width (1+ (length (number-to-string
+                             (count-lines (point-min) (point-max))))))
+         (format (concat "%" (number-to-string width) "d")))
+    (setq my-linum-format-string format)))
+
+(defvar my-linum-current-line-number 0)
+
+(setq linum-format 'my-linum-relative-line-numbers)
+
+(defun my-linum-relative-line-numbers (line-number)
+    (let* ((offset (abs (- line-number my-linum-current-line-number)))
+           (offset-or-abs (if (= offset 0) my-linum-current-line-number offset)))
+    (propertize (format my-linum-format-string offset-or-abs) 'face 'linum)))
+
+(defadvice linum-update (around my-linum-update)
+  (let ((my-linum-current-line-number (line-number-at-pos)))
+    ad-do-it))
+(ad-activate 'linum-update)         
+
+(global-linum-mode t)
 
 ;;(setq inferior-lisp-program "clisp -modern -I")
 ;;require slime?
@@ -20,8 +48,8 @@
 (add-to-list 'default-frame-alist '(background-color . "gray10"))
 (add-to-list 'default-frame-alist '(cursor-color . "white"))
 ;; Load VIP
-(load "vip")
-(global-set-key "\C-n" 'vip-change-mode-to-vi)
+;;(load "vip")
+;;(global-set-key "\C-n" 'vip-change-mode-to-vi)
 ;; clean *scratch*, no more startup screen
 (setq initial-scratch-message nil)
 (setq inhibit-startup-message t)
