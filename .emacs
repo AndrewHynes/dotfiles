@@ -154,7 +154,7 @@
      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
 
-;;;NOT MY LISP! Sent to me by a friend for use in my .emacs.
+;;;Author's GitHub package link - https://github.com/trillioneyes/pretty-colors-mode
 ;;PRETTY COLORS MODE START
 (eval-when-compile (require 'rainbow-delimiters))
  
@@ -245,6 +245,9 @@
 
 (rainbow-delimiters-mode t)
 (pretty-colors-mode t)
+
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'prog-mode-hook 'pretty-colors-mode)
 
 (load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
 
