@@ -1,7 +1,8 @@
+;;adds hjkl movement and remaps their old keys to the old movement keys
 ;; ; (backward-char) C-b <- C-h is the help map (help-command)  
-;; ; (next-line) C-n     <- C-j is (newline-and-indent)         
+;; ; (next-line)     C-n <- C-j is (newline-and-indent)         
 ;; ; (previous-line) C-p <- C-k is (kill-line)                  
-;; ; (forward-char) C-f  <- C-l is (recenter-top-bottom)        
+;; ; (forward-char)  C-f <- C-l is (recenter-top-bottom)        
 (global-set-key "\C-b" 'help-command)                        
 (global-set-key "\C-n" 'newline-and-indent)                  
 (global-set-key "\C-p" 'kill-line)                           
@@ -14,9 +15,26 @@
 ;; turns control shift F into format buffer -
 (global-set-key (kbd "C-F") #'(lambda () (interactive) (indent-region (point-min) (point-max))))
 
+;;;;for EMMS - music player - https://www.gnu.org/software/emms/
+;;Setup
+(require 'emms-setup)
+          (emms-all)
+          (emms-default-players)
+(define-emms-simple-player mplayer '(file url)
+      (regexp-opt '(".ogg" ".mp3" ".wav" ".mpg" ".mpeg" ".wmv" ".wma"
+                    ".mov" ".avi" ".divx" ".ogm" ".asf" ".mkv" "http://" "mms://"
+                    ".rm" ".rmvb" ".mp4" ".flac" ".vob" ".m4a" ".flv" ".ogv" ".pls"))
+      "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")
+(emms-add-directory-tree "~/Music/")
+(emms-shuffle)
+;;Keybindings
+(global-set-key (kbd "<kp-subtract>") 'emms-previous)
+(global-set-key (kbd "<kp-add>") 'emms-next)
+(global-set-key (kbd "<kp-multiply>") 'emms-start)
+(global-set-key (kbd "<kp-divide>") 'emms-pause)
+
 ;;relative line numbers -
 ;;adapted from https://stackoverflow.com/questions/6874516/relative-line-numbers-in-emacs
-
 (defvar my-linum-format-string "%3d")
 
 (add-hook 'linum-before-numbering-hook 'my-linum-get-format-string)
@@ -39,30 +57,40 @@
 (defadvice linum-update (around my-linum-update)
   (let ((my-linum-current-line-number (line-number-at-pos)))
     ad-do-it))
-(ad-activate 'linum-update)         
-
+(ad-activate 'linum-update)
 (global-linum-mode t)
 
-;;(setq inferior-lisp-program "clisp -modern -I")
-;;require slime?
+;;for Common Lisp
+(setq inferior-lisp-program "clisp -modern -I")
 
 ;; color theme and font
 (add-to-list 'default-frame-alist '(foreground-color . "gray"))
 (add-to-list 'default-frame-alist '(background-color . "gray10"))
 (add-to-list 'default-frame-alist '(cursor-color . "white"))
-;; Load VIP
-;;(load "vip")
-;;(global-set-key "\C-n" 'vip-change-mode-to-vi)
+
 ;; clean *scratch*, no more startup screen
 (setq initial-scratch-message nil)
 (setq inhibit-startup-message t)
-(set-input-method 'TeX)
-(tool-bar-mode -1)
 
+;;LaTeX style \ commands everywhere
+(set-input-method 'TeX)
+
+;;cleaner UI
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(global-visual-line-mode t)
+(show-paren-mode t)
+
+;;ido mode
 (require 'ido)
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (ido-mode 1)
+
+;;backups stored in ~/.emacs.d rather than normal dir
+(setq save-place-file (concat user-emacs-directory "places")
+      backup-directory-alist `(("." . ,(concat user-emacs-directory
+                                               "backups"))))
 
 ;; for non-tiling wms (if I ever want to use them) -
 (defun fullscreen (&optional f)
@@ -73,16 +101,20 @@
 			 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0)))
 (fullscreen)
 
+;;escape is now quit
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(global-visual-line-mode t)
-(show-paren-mode t)
 
-(add-hook 'java-mode-hook (lambda () (setq c-basic-offset 8)))
+;;uniquifies file names
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
 
+;;reasonable scroll length
 (setq scroll-step 1)
 
+;;f6 is eval buffer for Tuareg (for OCaml)
 (global-set-key [f6] 'tuareg-eval-buffer)
 
+;;makes Control W kill word backwards, like normal
 (global-set-key "\C-w" 'backward-kill-word)
 
 (push
@@ -92,13 +124,16 @@
 (add-hook 'tuareg-mode-hook 'merlin-mode)
 (add-hook 'caml-mode-hook 'merlin-mode)
 
+;;transparent window
 (add-to-list 'default-frame-alist '(alpha . (85 80)))
 
+;;sensible copy/paste keys
 (cua-mode t)
 (setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
 (transient-mark-mode 1) ;; No region when it is not highlighted
 (setq cua-keep-region-after-copy t) ;; Standard Windows behaviour
 
+;;adding package archives
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
@@ -107,6 +142,10 @@
 	     '("marmalade" .
 	       "http://marmalade-repo.org/packages/"))
 (package-initialize)
+
+;;Agda
+(load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
+;;To make use of the Agda standard library, add /usr/lib/agda to the Agda search path, either using the --include-path flag or by customising the Emacs mode variable agda2-include-dirs (M-x customize-group RET agda2 RET).
 
 ;;kindly taken from http://emacs-fu.blogspot.co.uk/2009/10/writing-presentations-with-org-mode-and.html
 ;;unsure if I need this, but keeping it in for good measure
@@ -233,7 +272,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-include-dirs (quote ("./ /usr/lib/agda")))
+ '(agda2-include-dirs (quote ("/usr/lib/agda .")))
  '(exec-path (quote ("/home/andrew/.opam/system/bin" "/home/andrew/.opam/system/bin" "/usr/lib/lightdm/lightdm" "/usr/local/sbin" "/usr/local/bin" "/usr/sbin" "/usr/bin" "/sbin" "/bin" "/usr/games" "/usr/local/games" "/usr/lib/emacs/24.2/x86_64-linux-gnu" "/home/andrew/.cabal/bin")))
  '(haskell-mode-hook (quote (turn-on-haskell-simple-indent)))
  '(send-mail-function (quote smtpmail-send-it)))
@@ -242,11 +281,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-					; start for hiding line at bottom
  '(mode-line ((t (:foreground "white"))))
  '(mode-line-highlight ((t nil)))
  '(mode-line-inactive ((t (:inherit mode-line :foreground "dim gray" :weight light))))
-					; end
  '(rainbow-delimiters-depth-1-face ((t (:foreground "magenta"))))
  '(rainbow-delimiters-depth-2-face ((t (:foreground "dark slate blue"))))
  '(rainbow-delimiters-depth-3-face ((t (:foreground "cyan"))))
@@ -263,7 +300,5 @@
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'prog-mode-hook 'pretty-colors-mode)
 
-(load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
 
-;;To make use of the Agda standard library, add /usr/lib/agda to the Agda search path, either using the --include-path flag or by customising the Emacs mode variable agda2-include-dirs (M-x customize-group RET agda2 RET).
 
