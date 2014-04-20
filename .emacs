@@ -15,11 +15,11 @@
 ;; turns control shift F into format buffer -
 (global-set-key (kbd "C-F") #'(lambda () (interactive) (indent-region (point-min) (point-max))))
 
-;;;;for EMMS - music player - https://www.gnu.org/software/emms/
+;;;;using EMMS as a music player - https://www.gnu.org/software/emms/
 ;;Setup
 (require 'emms-setup)
-          (emms-all)
-          (emms-default-players)
+(emms-all)
+(emms-default-players)
 (define-emms-simple-player mplayer '(file url)
       (regexp-opt '(".ogg" ".mp3" ".wav" ".mpg" ".mpeg" ".wmv" ".wma"
                     ".mov" ".avi" ".divx" ".ogm" ".asf" ".mkv" "http://" "mms://"
@@ -32,6 +32,97 @@
 (global-set-key (kbd "<kp-add>") 'emms-next)
 (global-set-key (kbd "<kp-multiply>") 'emms-start)
 (global-set-key (kbd "<kp-divide>") 'emms-pause)
+
+;;for Common Lisp
+(setq inferior-lisp-program "clisp -modern -I")
+
+;;; Colour theme and transparency
+;;colour theme
+(add-to-list 'default-frame-alist '(foreground-color . "gray"))
+(add-to-list 'default-frame-alist '(background-color . "gray10"))
+(add-to-list 'default-frame-alist '(cursor-color . "white"))
+;;transparency
+;first arg = focussed, second arg = unfocussed
+(add-to-list 'default-frame-alist '(alpha . (85 80))) 
+
+;; clean scratch, no more startup screen
+;now defaults to the scratch instead of the startup screen.
+(setq initial-scratch-message nil)
+(setq inhibit-startup-message t)
+
+;;LaTeX style \ commands everywhere
+(set-input-method 'TeX)
+
+;;cleaner UI
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(global-visual-line-mode t)
+(show-paren-mode t)
+;(menu-bar-mode 1)
+
+;;Enabling Ido mode and setting it to everywhere
+(require 'ido)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+
+;;backups stored in ~/.emacs.d rather than normal dir
+(setq save-place-file (concat user-emacs-directory "places")
+      backup-directory-alist `(("." . ,(concat user-emacs-directory
+                                               "backups"))))
+
+;;escape is now quit/stop (what C-g is)
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+;;uniquifies file names
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+
+;;reasonable scroll length
+(setq scroll-step 1)
+
+;;makes Control W kill word backwards, like normal
+(global-set-key "\C-w" 'backward-kill-word)
+
+;;;OCaml things
+;; stuff pertaining to Merlin and OPAM
+(push
+ (concat (substring (shell-command-to-string "opam config var share") 0 -1) "/emacs/site-lisp") load-path)
+(setq merlin-command (concat (substring (shell-command-to-string "opam config var bin") 0 -1) "/ocamlmerlin"))
+(autoload 'merlin-mode "merlin" "Merlin mode" t)
+(add-hook 'tuareg-mode-hook 'merlin-mode)
+(add-hook 'caml-mode-hook 'merlin-mode)
+;;F6 is now eval buffer for Tuareg Mode
+(global-set-key [f6] 'tuareg-eval-buffer)
+
+;;sensible copy/paste keys
+(cua-mode t)
+(setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
+(transient-mark-mode 1) ;; No region when it is not highlighted
+(setq cua-keep-region-after-copy t) ;; Standard Windows behaviour
+
+;;adding package archives
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+(require 'package)
+(add-to-list 'package-archives 
+	     '("marmalade" .
+	       "http://marmalade-repo.org/packages/"))
+(package-initialize)
+
+;;Agda
+(load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
+;;To make use of the Agda standard library, add /usr/lib/agda to the Agda search path, either using the --include-path flag or by customising the Emacs mode variable agda2-include-dirs (M-x customize-group RET agda2 RET).
+
+;; fullscreen for non-tiling WMs/DEs (if I ever want to use them) -
+(defun fullscreen (&optional f)
+  (interactive)
+  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
+			 '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
+  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
+			 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0)))
+(fullscreen)
 
 ;;relative line numbers -
 ;;adapted from https://stackoverflow.com/questions/6874516/relative-line-numbers-in-emacs
@@ -59,93 +150,6 @@
     ad-do-it))
 (ad-activate 'linum-update)
 (global-linum-mode t)
-
-;;for Common Lisp
-(setq inferior-lisp-program "clisp -modern -I")
-
-;; color theme and font
-(add-to-list 'default-frame-alist '(foreground-color . "gray"))
-(add-to-list 'default-frame-alist '(background-color . "gray10"))
-(add-to-list 'default-frame-alist '(cursor-color . "white"))
-
-;; clean *scratch*, no more startup screen
-(setq initial-scratch-message nil)
-(setq inhibit-startup-message t)
-
-;;LaTeX style \ commands everywhere
-(set-input-method 'TeX)
-
-;;cleaner UI
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(global-visual-line-mode t)
-(show-paren-mode t)
-
-;;ido mode
-(require 'ido)
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
-
-;;backups stored in ~/.emacs.d rather than normal dir
-(setq save-place-file (concat user-emacs-directory "places")
-      backup-directory-alist `(("." . ,(concat user-emacs-directory
-                                               "backups"))))
-
-;; for non-tiling wms (if I ever want to use them) -
-(defun fullscreen (&optional f)
-  (interactive)
-  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-			 '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
-  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-			 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0)))
-(fullscreen)
-
-;;escape is now quit
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-;;uniquifies file names
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
-
-;;reasonable scroll length
-(setq scroll-step 1)
-
-;;f6 is eval buffer for Tuareg (for OCaml)
-(global-set-key [f6] 'tuareg-eval-buffer)
-
-;;makes Control W kill word backwards, like normal
-(global-set-key "\C-w" 'backward-kill-word)
-
-(push
- (concat (substring (shell-command-to-string "opam config var share") 0 -1) "/emacs/site-lisp") load-path)
-(setq merlin-command (concat (substring (shell-command-to-string "opam config var bin") 0 -1) "/ocamlmerlin"))
-(autoload 'merlin-mode "merlin" "Merlin mode" t)
-(add-hook 'tuareg-mode-hook 'merlin-mode)
-(add-hook 'caml-mode-hook 'merlin-mode)
-
-;;transparent window
-(add-to-list 'default-frame-alist '(alpha . (85 80)))
-
-;;sensible copy/paste keys
-(cua-mode t)
-(setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
-(transient-mark-mode 1) ;; No region when it is not highlighted
-(setq cua-keep-region-after-copy t) ;; Standard Windows behaviour
-
-;;adding package archives
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
-(require 'package)
-(add-to-list 'package-archives 
-	     '("marmalade" .
-	       "http://marmalade-repo.org/packages/"))
-(package-initialize)
-
-;;Agda
-(load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
-;;To make use of the Agda standard library, add /usr/lib/agda to the Agda search path, either using the --include-path flag or by customising the Emacs mode variable agda2-include-dirs (M-x customize-group RET agda2 RET).
 
 ;;kindly taken from http://emacs-fu.blogspot.co.uk/2009/10/writing-presentations-with-org-mode-and.html
 ;;unsure if I need this, but keeping it in for good measure
@@ -297,6 +301,7 @@
 (rainbow-delimiters-mode t)
 (pretty-colors-mode t)
 
+;;global pretty colours
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'prog-mode-hook 'pretty-colors-mode)
 
