@@ -115,14 +115,8 @@
 (load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
 ;;To make use of the Agda standard library, add /usr/lib/agda to the Agda search path, either using the --include-path flag or by customising the Emacs mode variable agda2-include-dirs (M-x customize-group RET agda2 RET).
 
-;; fullscreen for non-tiling WMs/DEs (if I ever want to use them) -
-(defun fullscreen (&optional f)
-  (interactive)
-  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-			 '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
-  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-			 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0)))
-(fullscreen)
+;;starting fullscreen for non-tiling WMs/DEs (if I ever want this) -
+;(add-to-list 'default-frame-alist '(fullscreen . fullboth)) 
 
 ;;relative line numbers -
 ;;adapted from https://stackoverflow.com/questions/6874516/relative-line-numbers-in-emacs
@@ -304,6 +298,3 @@
 ;;global pretty colours
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'prog-mode-hook 'pretty-colors-mode)
-
-
-
