@@ -17,6 +17,11 @@ xclip &
 
 xmodmap -e "keycode 104 = Return" &
 
+xbindkeys
+
+emacs --daemon &
+
+#exec xmonad
 exec wmii
 
 # exec gnome-session
