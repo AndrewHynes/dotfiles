@@ -27,11 +27,34 @@
       "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")
 (emms-add-directory-tree "~/Music/")
 (emms-shuffle)
-;;Keybindings
-(global-set-key (kbd "<kp-subtract>") 'emms-previous)
-(global-set-key (kbd "<kp-add>") 'emms-next)
-(global-set-key (kbd "<kp-multiply>") 'emms-start)
-(global-set-key (kbd "<kp-divide>") 'emms-pause)
+;;Keybindings - NOW GLOBAL thanks to xbindkeys
+;(global-set-key (kbd "<kp-subtract>") 'emms-previous)
+;(global-set-key (kbd "<kp-add>") 'emms-next)
+;(global-set-key (kbd "<kp-multiply>") 'emms-start)
+;(global-set-key (kbd "<kp-divide>") 'emms-pause)
+
+;; Libtag support
+(require 'emms-info-libtag)
+(setq emms-info-functions '(emms-info-libtag))
+
+;; Stolen and adapted from https://www.gnu.org/software/emms/configs/lb-emms.el
+(defun emms-info-track-description (track)
+  "Return a description of the current track."
+  (if (and (emms-track-get track 'info-artist)
+           (emms-track-get track 'info-title))
+      (let ((pmin (emms-track-get track 'info-playing-time-min))
+            (psec (emms-track-get track 'info-playing-time-sec))
+            (ptot (emms-track-get track 'info-playing-time))
+            (art  (emms-track-get track 'info-artist))
+            (tit  (emms-track-get track 'info-title)))
+        (cond ((and pmin psec) (format "%s - %s [%02d:%02d]" art tit pmin psec))
+              (ptot (format  "%s - %s [%02d:%02d]" art tit (/ ptot 60) (% ptot 60)))
+              (t (emms-track-simple-description track))))))
+
+;imperfect, and currently displays nil for most tracks, which is unfortunate
+;maybe once I understand emacs lisp better I can tinker!
+
+;(setq emms-track-description-function 'emms-info-track-description)
 
 ;;for Common Lisp
 (setq inferior-lisp-program "clisp -modern -I")

@@ -58,6 +58,12 @@ alias emp="emacsclient -e \"(emms-pause)\""
 
 alias ems="emacsclient -e \"(emms-start)\""
 
+alias enext="emacsclient -e \"(emms-next)\""
+
+alias eprev="emacsclient -e \"(emms-previous)\""
+
+alias ecurr="emacsclient -e \"(emms-show)\""
+
 alias emt="emacsclient -t"
 
 set PATH ~/.cabal/bin $PATH
@@ -81,6 +87,12 @@ function search
 	aura -As $argv
 end
 
+# start X at login
+if status --is-login
+    if test -z "$DISPLAY" -a $XDG_VTNR = 1
+        exec startx
+    end
+end
 
 set fish_greeting ""
 
