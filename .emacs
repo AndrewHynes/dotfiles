@@ -55,8 +55,9 @@
 ;maybe once I understand emacs lisp better I can tinker!
 ;(setq emms-track-description-function 'emms-info-track-description)
 
+;for better integration with printing externally
 (defun emms-no-show ()
-  "Modified emms-show from http://git.savannah.gnu.org/cgit/emms.git/tree/lisp/emms.el
+  "Modified the original emms-show from http://git.savannah.gnu.org/cgit/emms.git/tree/lisp/emms.el
   will return the song name without printing in minibuffer (for querying purposes).
   Would not have been possible with proprietary software!"
   (interactive "P")
@@ -177,6 +178,15 @@
     ad-do-it))
 (ad-activate 'linum-update)
 (global-linum-mode t)
+
+;; Set auto-mode-alist for various modes and autload others
+
+(setq auto-mode-alist (append '(("\\.fish\\'" . shell-script-mode)
+				;in case I ever need more, there are
+				;some other examples below
+				("\\.rkt\\'" . scheme-mode)
+				("\\.pl\\'" . prolog-mode))
+			      auto-mode-alist))
 
 ;;kindly taken from http://emacs-fu.blogspot.co.uk/2009/10/writing-presentations-with-org-mode-and.html
 ;;unsure if I need this, but keeping it in for good measure

@@ -37,6 +37,24 @@
 #keystate_capslock = enable
 #keystate_scrolllock= enable
 
+"scrot"
+    Print
+
+"emacsclient -e '(emms-start)'"
+    KP_Multiply
+
+"emacsclient -e '(emms-pause)'"
+    KP_Divide
+
+"emacsclient -e '(emms-next)'"
+    KP_Add
+
+"emacsclient -e '(emms-previous)'"
+    KP_Subtract
+
+"emacsclient -c"
+    Mod4 + KP_Multiply
+
 # Examples of commands:
 
 #"xbindkeys_show" 
@@ -64,21 +82,6 @@
 ## Control + mouse button 2 release event starts rxvt
 #"rxvt"
 #  Control + b:2 + Release
-
-"scrot"
-    Print
-
-"emacsclient -e '(emms-start)'"
-    KP_Multiply
-
-"emacsclient -e '(emms-pause)'"
-    KP_Divide
-
-"emacsclient -e '(emms-next)'"
-    KP_Add
-
-"emacsclient -e '(emms-previous)'"
-    KP_Subtract
 
 
 ##################################
