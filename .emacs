@@ -37,7 +37,7 @@
 (require 'emms-info-libtag)
 (setq emms-info-functions '(emms-info-libtag))
 
-;; Stolen and adapted from https://www.gnu.org/software/emms/configs/lb-emms.el
+;; Stolen from https://www.gnu.org/software/emms/configs/lb-emms.el
 (defun emms-info-track-description (track)
   "Return a description of the current track."
   (if (and (emms-track-get track 'info-artist)
@@ -51,10 +51,20 @@
               (ptot (format  "%s - %s [%02d:%02d]" art tit (/ ptot 60) (% ptot 60)))
               (t (emms-track-simple-description track))))))
 
-;imperfect, and currently displays nil for most tracks, which is unfortunate
+;the below is imperfect, and currently displays nil for most tracks, which is unfortunate
 ;maybe once I understand emacs lisp better I can tinker!
-
 ;(setq emms-track-description-function 'emms-info-track-description)
+
+(defun emms-no-show ()
+  "Modified emms-show from http://git.savannah.gnu.org/cgit/emms.git/tree/lisp/emms.el
+  will return the song name without printing in minibuffer (for querying purposes).
+  Would not have been possible with proprietary software!"
+  (interactive "P")
+  (if emms-player-playing-p
+    (format emms-show-format
+            (emms-track-description
+              (emms-playlist-current-selected-track)))
+    "Nothing playing right now"))
 
 ;;for Common Lisp
 (setq inferior-lisp-program "clisp -modern -I")
