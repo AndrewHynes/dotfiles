@@ -8,6 +8,9 @@ set -- $(echo $WMII_NORMCOLORS $WMII_FOCUSCOLORS)
 WMII_MENU="dmenu -fn '$WMII_FONT' -nf '$1' -nb '$2' -sf '$4' -sb '$5'"
 #add -b before -fn for bottom dmenu
 
+#https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+#for future me - to try out for the wmii bar
+
 # Status Bar Info
 status()
 {
@@ -21,7 +24,7 @@ WMII_TERM="sakura -t Terminal-chan"
 #add -e fish if user's shell is not /usr/bin/fish
 
 #compositing manager-
-xcompmgr &
+compton -b
 
 #background setting
 feh --bg-fill ~/.background.png &

@@ -51,8 +51,8 @@
               (ptot (format  "%s - %s [%02d:%02d]" art tit (/ ptot 60) (% ptot 60)))
               (t (emms-track-simple-description track))))))
 
-;the below is imperfect, and currently displays nil for most tracks, which is unfortunate
-;maybe once I understand emacs lisp better I can tinker!
+;For some reason, this breaks the above but it was included in the website
+;I got the above off so I'm leaving it here for good measure
 ;(setq emms-track-description-function 'emms-info-track-description)
 
 ;for better integration with printing externally
@@ -128,6 +128,11 @@
 (add-hook 'caml-mode-hook 'merlin-mode)
 ;;F6 is now eval buffer for Tuareg Mode
 (global-set-key [f6] 'tuareg-eval-buffer)
+
+;EVIL mode
+;(require 'evil)
+;(setq evil-cross-lines t)
+;(evil-mode 1)
 
 ;;sensible copy/paste keys
 (cua-mode t)
@@ -306,7 +311,8 @@
 					;(pretty-colors-colorize-region (point-min) (point-max))
     ))
 
-(provide 'pretty-colors)
+;(provide 'pretty-colors)
+;;;;UNCOMMENT THE ABOVE AND LINES AT THE END FOR PRETTY COLOURS
 ;;PRETTY COLORS MODE END
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -335,9 +341,9 @@
  '(rainbow-delimiters-depth-8-face ((t (:foreground "navajo white"))))
  '(rainbow-delimiters-depth-9-face ((t (:foreground "dark slate gray")))))
 
-(rainbow-delimiters-mode t)
-(pretty-colors-mode t)
+;(rainbow-delimiters-mode t)
+;(pretty-colors-mode t)
 
-;;global pretty colours
-(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'prog-mode-hook 'pretty-colors-mode)
+;;global pretty colours - off temporarily
+;(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+;(add-hook 'prog-mode-hook 'pretty-colors-mode)

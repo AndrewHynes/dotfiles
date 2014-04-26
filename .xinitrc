@@ -11,15 +11,14 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
   unset f
 fi
 
-setxkbmap -layout gb &
+setxkbmap -layout gb -option 'ctrl:nocaps'
+#English layout, with caps lock as second control
 
 xclip &
 
-xmodmap -e "keycode 104 = Return" &
-
 xbindkeys
 
-emacs --daemon &
+#emacs as a daemon is now properly managed by systemd
 
 #exec xmonad
 exec wmii
