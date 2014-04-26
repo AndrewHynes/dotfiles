@@ -31,6 +31,7 @@
 (emms-add-directory-tree "~/Music/")
 (emms-shuffle)
 ;;Keybindings - NOW GLOBAL thanks to xbindkeys
+;;These are kept here in case I ever want to de-globalify
 ;(global-set-key (kbd "<kp-subtract>") 'emms-previous)
 ;(global-set-key (kbd "<kp-add>") 'emms-next)
 ;(global-set-key (kbd "<kp-multiply>") 'emms-start)
@@ -90,8 +91,15 @@
 (setq initial-scratch-message nil)
 (setq inhibit-startup-message t)
 
-;;LaTeX style \ commands everywhere
+;;LaTeX style \ commands
 (set-input-method 'TeX)
+;note, to change back, do
+;M-x set-input-method RET british
+;for some reason, "english" assumes Dvorak
+
+;Keeps 'TeX as the default method everywhere
+(defadvice switch-to-buffer (after activate-input-method activate)
+  (activate-input-method 'TeX))
 
 ;;cleaner UI
 (tool-bar-mode -1)
@@ -107,11 +115,11 @@
 (ido-mode 1)
 
 ;;Smex mode - M-x Ido, essentially
-;For some reason it doesn't work.
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 ;(global-set-key (kbd "C-c M-x") 'execute-extended-command) ; OLD M-x
 
+;hrngr sexy unicode
 (setq smex-prompt-string "λ » ")
 ;(setq smex-auto-update nil)
 ;(smex-auto-update 60)
@@ -137,16 +145,17 @@
 (global-set-key "\C-w" 'backward-kill-word)
 
 ;;;OCaml things
-;; stuff pertaining to Merlin and OPAM
-;;Commented out as Merlin is not installed on this system
+;;F6 is now eval buffer for Tuareg Mode
+(global-set-key [f6] 'tuareg-eval-buffer)
+
+;; stuff pertaining to Merlin
+;; ~-> Commented out as Merlin is not installed on this system <-~
 ;(push
 ;(concat (substring (shell-command-to-string "opam config var share") 0 -1) "/emacs/site-lisp") load-path)
 ;(setq merlin-command (concat (substring (shell-command-to-string "opam config var bin") 0 -1) "/ocamlmerlin"))
 ;(autoload 'merlin-mode "merlin" "Merlin mode" t)
 ;(add-hook 'tuareg-mode-hook 'merlin-mode)
 ;(add-hook 'caml-mode-hook 'merlin-mode)
-;;F6 is now eval buffer for Tuareg Mode
-(global-set-key [f6] 'tuareg-eval-buffer)
 
 ;EVIL mode
 ;(require 'evil)
@@ -279,7 +288,6 @@
     ))
 
 (provide 'pretty-colors)
-;;;;UNCOMMENT THE ABOVE AND LINES AT THE END FOR PRETTY COLOURS
 ;;PRETTY COLORS MODE END
 
 (custom-set-variables
@@ -309,9 +317,11 @@
  '(rainbow-delimiters-depth-8-face ((t (:foreground "navajo white"))))
  '(rainbow-delimiters-depth-9-face ((t (:foreground "dark slate gray")))))
 
+
+;;UNCOMMENT BELOW FOR PRETTY COLOURS MODE!
+;;Off temporarily to examine a bug with C mode and pretty colours.
 ;(rainbow-delimiters-mode t)
 ;(pretty-colors-mode t)
 
-;;global pretty colours - off temporarily
 ;(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 ;(add-hook 'prog-mode-hook 'pretty-colors-mode)
