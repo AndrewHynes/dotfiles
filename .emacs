@@ -15,6 +15,9 @@
 ;; turns control shift F into format buffer -
 (global-set-key (kbd "C-F") #'(lambda () (interactive) (indent-region (point-min) (point-max))))
 
+;;Can now see keystrokes as you're typing them...
+(setq echo-keystrokes 0.1)
+
 ;;;;using EMMS as a music player - https://www.gnu.org/software/emms/
 ;;Setup
 (require 'emms-setup)
@@ -70,6 +73,9 @@
 ;;for Common Lisp
 (setq inferior-lisp-program "clisp -modern -I")
 
+;Only type y or n, rather than "yes" or "no"
+(defalias 'yes-or-no-p 'y-or-n-p)
+
 ;;; Colour theme and transparency
 ;;colour theme
 (add-to-list 'default-frame-alist '(foreground-color . "gray"))
@@ -100,7 +106,19 @@
 (setq ido-everywhere t)
 (ido-mode 1)
 
+;;Smex mode - M-x Ido, essentially
+;For some reason it doesn't work.
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;(global-set-key (kbd "C-c M-x") 'execute-extended-command) ; OLD M-x
+
+(setq smex-prompt-string "λ » ")
+;(setq smex-auto-update nil)
+;(smex-auto-update 60)
+
 ;;backups stored in ~/.emacs.d rather than normal dir
+(require 'saveplace)
+(setq-default save-place t)
 (setq save-place-file (concat user-emacs-directory "places")
       backup-directory-alist `(("." . ,(concat user-emacs-directory
                                                "backups"))))
@@ -120,12 +138,13 @@
 
 ;;;OCaml things
 ;; stuff pertaining to Merlin and OPAM
-(push
- (concat (substring (shell-command-to-string "opam config var share") 0 -1) "/emacs/site-lisp") load-path)
-(setq merlin-command (concat (substring (shell-command-to-string "opam config var bin") 0 -1) "/ocamlmerlin"))
-(autoload 'merlin-mode "merlin" "Merlin mode" t)
-(add-hook 'tuareg-mode-hook 'merlin-mode)
-(add-hook 'caml-mode-hook 'merlin-mode)
+;;Commented out as Merlin is not installed on this system
+;(push
+;(concat (substring (shell-command-to-string "opam config var share") 0 -1) "/emacs/site-lisp") load-path)
+;(setq merlin-command (concat (substring (shell-command-to-string "opam config var bin") 0 -1) "/ocamlmerlin"))
+;(autoload 'merlin-mode "merlin" "Merlin mode" t)
+;(add-hook 'tuareg-mode-hook 'merlin-mode)
+;(add-hook 'caml-mode-hook 'merlin-mode)
 ;;F6 is now eval buffer for Tuareg Mode
 (global-set-key [f6] 'tuareg-eval-buffer)
 
@@ -159,6 +178,7 @@
 
 ;;relative line numbers -
 ;;adapted from https://stackoverflow.com/questions/6874516/relative-line-numbers-in-emacs
+(require 'linum)
 (defvar my-linum-format-string "%3d")
 
 (add-hook 'linum-before-numbering-hook 'my-linum-get-format-string)
@@ -193,60 +213,7 @@
 				("\\.pl\\'" . prolog-mode))
 			      auto-mode-alist))
 
-;;kindly taken from http://emacs-fu.blogspot.co.uk/2009/10/writing-presentations-with-org-mode-and.html
-;;unsure if I need this, but keeping it in for good measure
-;; #+LaTeX_CLASS: beamer in org files
-(unless (boundp 'org-export-latex-classes)
-  (setq org-export-latex-classes nil))
-(add-to-list 'org-export-latex-classes
-	     ;; beamer class, for presentations
-	     '("beamer"
-	       "\\documentclass[11pt]{beamer}\n
-      \\mode<{{{beamermode}}}>\n
-      \\usetheme{{{{beamertheme}}}}\n
-      \\usecolortheme{{{{beamercolortheme}}}}\n
-      \\beamertemplateballitem\n
-      \\setbeameroption{show notes}
-      \\usepackage[utf8]{inputenc}\n
-      \\usepackage[T1]{fontenc}\n
-      \\usepackage{hyperref}\n
-      \\usepackage{color}
-      \\usepackage{listings}
-      \\lstset{numbers=none,language=[ISO]C++,tabsize=4,
-  frame=single,
-  basicstyle=\\small,
-  showspaces=false,showstringspaces=false,
-  showtabs=false,
-  keywordstyle=\\color{blue}\\bfseries,
-  commentstyle=\\color{red},
-  }\n
-      \\usepackage{verbatim}\n
-      \\institute{{{{beamerinstitute}}}}\n          
-       \\subject{{{{beamersubject}}}}\n"
-
-	       ("\\section{%s}" . "\\section*{%s}")
-	       
-	       ("\\begin{frame}[fragile]\\frametitle{%s}"
-		"\\end{frame}"
-		"\\begin{frame}[fragile]\\frametitle{%s}"
-		"\\end{frame}")))
-
-;; letter class, for formal letters
-
-(add-to-list 'org-export-latex-classes
-
-	     '("letter"
-	       "\\documentclass[11pt]{letter}\n
-      \\usepackage[utf8]{inputenc}\n
-      \\usepackage[T1]{fontenc}\n
-      \\usepackage{color}"
-	       
-	       ("\\section{%s}" . "\\section*{%s}")
-	       ("\\subsection{%s}" . "\\subsection*{%s}")
-	       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-	       ("\\paragraph{%s}" . "\\paragraph*{%s}")
-	       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
+;;I may need this - http://emacs-fu.blogspot.co.uk/2009/10/writing-presentations-with-org-mode-and.html
 
 ;;;Author's GitHub package link - https://github.com/trillioneyes/pretty-colors-mode
 ;;PRETTY COLORS MODE START
@@ -311,9 +278,10 @@
 					;(pretty-colors-colorize-region (point-min) (point-max))
     ))
 
-;(provide 'pretty-colors)
+(provide 'pretty-colors)
 ;;;;UNCOMMENT THE ABOVE AND LINES AT THE END FOR PRETTY COLOURS
 ;;PRETTY COLORS MODE END
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
