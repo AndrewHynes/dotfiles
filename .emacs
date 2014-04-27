@@ -15,6 +15,10 @@
 ;; turns control shift F into format buffer -
 (global-set-key (kbd "C-F") #'(lambda () (interactive) (indent-region (point-min) (point-max))))
 
+;;copy buffer function -
+(global-set-key (kbd "C-A") #'(lambda () (interactive)
+  (kill-new (buffer-substring (point-min) (point-max)))))
+
 ;;Can now see keystrokes as you're typing them...
 (setq echo-keystrokes 0.1)
 
@@ -156,6 +160,25 @@
 ;(autoload 'merlin-mode "merlin" "Merlin mode" t)
 ;(add-hook 'tuareg-mode-hook 'merlin-mode)
 ;(add-hook 'caml-mode-hook 'merlin-mode)
+
+(defun to-ocaml-list ()
+  "Turns a buffer full of strings into an OCaml compatable
+   list of strings."
+  (interactive) ;means I can M-x it
+  (set-mark-command nil)
+  (goto-char (point-min))
+  (insert "[\n") ;note - this goes forward a line
+  (defun helper ()
+    (if (not (= (line-number-at-pos) 2))
+      (insert ";"))
+    (insert "\"")
+    (end-of-line)
+    (insert "\"")
+    (forward-line)
+    (if (not (eobp)) ;end of buffer predicate
+	(helper)))
+  (helper) (insert "]")
+  (set-mark-command t))
 
 ;EVIL mode
 ;(require 'evil)
