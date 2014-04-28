@@ -97,9 +97,9 @@
 
 ;;LaTeX style \ commands
 (set-input-method 'TeX)
-;note, to change back, do
-;M-x set-input-method RET british
-;for some reason, "english" assumes Dvorak
+;;note, to change back, do
+;;M-x set-input-method RET british
+;;for some reason, "english" assumes Dvorak
 
 ;Keeps 'TeX as the default method everywhere
 (defadvice switch-to-buffer (after activate-input-method activate)
@@ -110,7 +110,10 @@
 (scroll-bar-mode -1)
 (global-visual-line-mode t)
 (show-paren-mode t)
-;(menu-bar-mode 1)
+(menu-bar-mode -1)
+
+;;added a toggle in case I ever need to make the menu bar visible
+(global-set-key [f9] 'toggle-menu-bar-mode-from-frame)
 
 ;;Enabling Ido mode and setting it to everywhere
 (require 'ido)
@@ -121,12 +124,12 @@
 ;;Smex mode - M-x Ido, essentially
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;(global-set-key (kbd "C-c M-x") 'execute-extended-command) ; OLD M-x
+;;(global-set-key (kbd "C-c M-x") 'execute-extended-command) ; OLD M-x
 
-;hrngr sexy unicode
+;;hrngr sexy unicode
 (setq smex-prompt-string "λ » ")
-;(setq smex-auto-update nil)
-;(smex-auto-update 60)
+;;(setq smex-auto-update nil)
+;;(smex-auto-update 60)
 
 ;;backups stored in ~/.emacs.d rather than normal dir
 (require 'saveplace)
@@ -211,15 +214,15 @@
 ;;relative line numbers -
 ;;adapted from https://stackoverflow.com/questions/6874516/relative-line-numbers-in-emacs
 (require 'linum)
-(defvar my-linum-format-string "%3d")
+(defvar my-linum-format-suffix "%3d")
 
-(add-hook 'linum-before-numbering-hook 'my-linum-get-format-string)
+(add-hook 'linum-before-numbering-hook 'my-linum-get-format-suffix)
 
-(defun my-linum-get-format-string ()
+(defun my-linum-get-format-suffix ()
   (let* ((width (1+ (length (number-to-string
                              (count-lines (point-min) (point-max))))))
-         (format (concat "%" (number-to-string width) "d")))
-    (setq my-linum-format-string format)))
+         (format (concat (number-to-string width) "d")))
+    (setq my-linum-format-suffix format)))
 
 (defvar my-linum-current-line-number 0)
 
@@ -227,8 +230,8 @@
 
 (defun my-linum-relative-line-numbers (line-number)
   (let* ((offset (abs (- line-number my-linum-current-line-number)))
-	 (offset-or-abs (if (= offset 0) my-linum-current-line-number offset)))
-    (propertize (format my-linum-format-string offset-or-abs) 'face 'linum)))
+         (offset-or-abs (if (= offset 0) my-linum-current-line-number offset)))
+    (propertize (format (concat (if (= offset 0) "%-" "%") my-linum-format-suffix) offset-or-abs) 'face 'linum)))
 
 (defadvice linum-update (around my-linum-update)
   (let ((my-linum-current-line-number (line-number-at-pos)))
