@@ -10,11 +10,13 @@ WMII_MENU="dmenu -fn '$WMII_FONT' -nf '$1' -nb '$2' -sf '$4' -sb '$5'"
 
 #https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
 #for future me - to try out for the wmii bar
+#andrew@haru ~> emacsclient -e "emms-playing-time-string" | tr -d "\""
+# 00:39/06:03
 
 # Status Bar Info
 status()
 {
-    echo -n $(emacsclient -e "(emms-no-show)") '|' $(acpi -b | sed 's/.*, \{0,2\}\([0-9]\{1,3\}%\),.*/Bat: \1/') 'Wifi:' $(iwconfig wlp4s0 | sed 's/ /\n/g' | grep Quality)' |' '/:' $(df -h | grep sda1 | awk '{print $3}') '|' 'RAM:' $(free -m | grep -i /cache | awk '{print $3}') 'MB |' $(date +"%a %b %d %H:%M")
+    echo -n $(emacsclient -e "(emms-no-show)" | tr -d "\"") $(emacsclient -e "emms-playing-time-string" | tr -d "\"") '|' $(acpi -b | sed 's/.*, \{0,2\}\([0-9]\{1,3\}%\),.*/Bat: \1/') 'Wifi:' $(iwconfig wlp4s0 | sed 's/ /\n/g' | grep Quality)' |' '/:' $(df -h | grep sda1 | awk '{print $3}') '|' 'RAM:' $(free -m | grep -i /cache | awk '{print $3}') 'MB |' $(date +"%a %b %d %H:%M")
 }
 
 #'CPUMHz:' $(cat /proc/cpuinfo | grep MHz | awk '{printf "%.0f\n", $4}') '|'

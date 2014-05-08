@@ -1,26 +1,33 @@
+;;Unprefixed Common Lisp expressions for use throughout the file
+(require 'cl)
+;;Could do (require 'cl-lib), but prefixing "cl-" to everything for some standard functions 
+;;is tedious and should not be required
+
 ;;adds hjkl movement and remaps their old keys to the old movement keys
-;; ; (backward-char) C-b <- C-h is the help map (help-command)  
-;; ; (next-line)     C-n <- C-j is (newline-and-indent)         
-;; ; (previous-line) C-p <- C-k is (kill-line)                  
-;; ; (forward-char)  C-f <- C-l is (recenter-top-bottom)        
-(global-set-key "\C-b" 'help-command)                        
-(global-set-key "\C-n" 'newline-and-indent)                  
-(global-set-key "\C-p" 'kill-line)                           
-(global-set-key "\C-f" 'recenter-top-bottom)                 
-(global-set-key "\C-h" 'backward-char)                       
-(global-set-key "\C-j" 'next-line)                                                                                     
-(global-set-key "\C-k" 'previous-line)                       
-(global-set-key "\C-l" 'forward-char)      
+;; ; (backward-char) C-b <- C-h is the help map (help-command)
+;; ; (next-line)     C-n <- C-j is (newline-and-indent)
+;; ; (previous-line) C-p <- C-k is (kill-line)
+;; ; (forward-char)  C-f <- C-l is (recenter-top-bottom)
+(global-set-key "\C-b" 'help-command)
+(global-set-key "\C-n" 'newline-and-indent)
+(global-set-key "\C-p" 'kill-line)
+(global-set-key "\C-f" 'recenter-top-bottom)
+(global-set-key "\C-h" 'backward-char)
+(global-set-key "\C-j" 'next-line)
+(global-set-key "\C-k" 'previous-line)
+(global-set-key "\C-l" 'forward-char)
 
 ;; turns control shift F into format buffer -
 (global-set-key (kbd "C-F") #'(lambda () (interactive) (indent-region (point-min) (point-max))))
 
 ;;copy buffer function -
-(global-set-key (kbd "C-A") #'(lambda () (interactive)
-  (kill-new (buffer-substring (point-min) (point-max)))))
+(global-set-key (kbd "C-A") #'(lambda () (interactive) (kill-new (buffer-substring (point-min) (point-max)))))
 
 ;;Can now see keystrokes as you're typing them...
 (setq echo-keystrokes 0.1)
+
+;;Loads up my self-made E-prime mode
+(require 'eprime-mode)
 
 ;;;;using EMMS as a music player - https://www.gnu.org/software/emms/
 ;;Setup
@@ -75,10 +82,16 @@
               (emms-playlist-current-selected-track)))
     "Nothing playing right now"))
 
-;;for Common Lisp
+;;Used for trimming some whitespace
+;;Main use is to trim whitespace around the current
+;;playing time for EMMS
+(defun trim-first-and-last (string)
+  (substring string 1 (- (length string) 1)))
+
+;;for Common Lisp in Emacs
 (setq inferior-lisp-program "clisp -modern -I")
 
-;Only type y or n, rather than "yes" or "no"
+;;Only type y or n, rather than "yes" or "no"
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;;; Colour theme and transparency
@@ -105,15 +118,24 @@
 (defadvice switch-to-buffer (after activate-input-method activate)
   (activate-input-method 'TeX))
 
-;;cleaner UI
+;;;cleaner UI
+;;removal of bars
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(global-visual-line-mode t)
-(show-paren-mode t)
 (menu-bar-mode -1)
 
 ;;added a toggle in case I ever need to make the menu bar visible
 (global-set-key [f9] 'toggle-menu-bar-mode-from-frame)
+
+;;removes ugly vertical border
+(set-face-foreground 'vertical-border "gray10")
+
+;;Visual thingies that should be standard
+(global-visual-line-mode t)
+(show-paren-mode t)
+
+;;Shows the expression rather than just the brackets
+(setq show-paren-style 'expression)
 
 ;;Enabling Ido mode and setting it to everywhere
 (require 'ido)
@@ -206,13 +228,15 @@
 
 ;;Agda
 (load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
-;;To make use of the Agda standard library, add /usr/lib/agda to the Agda search path, either using the --include-path flag or by customising the Emacs mode variable agda2-include-dirs (M-x customize-group RET agda2 RET).
+;;To make use of the Agda standard library, add /usr/lib/agda to the Agda search path, either using the --include-path flag 
+;;or by customising the Emacs mode variable agda2-include-dirs (M-x customize-group RET agda2 RET).
 
 ;;starting fullscreen for non-tiling WMs/DEs (if I ever want this) -
-;(add-to-list 'default-frame-alist '(fullscreen . fullboth)) 
+;(add-to-list 'default-frame-alist '(fullscreen . fullboth))
 
 ;;relative line numbers -
 ;;adapted from https://stackoverflow.com/questions/6874516/relative-line-numbers-in-emacs
+
 (require 'linum)
 (defvar my-linum-format-suffix "%3d")
 
@@ -230,8 +254,15 @@
 
 (defun my-linum-relative-line-numbers (line-number)
   (let* ((offset (abs (- line-number my-linum-current-line-number)))
-         (offset-or-abs (if (= offset 0) my-linum-current-line-number offset)))
-    (propertize (format (concat (if (= offset 0) "%-" "%") my-linum-format-suffix) offset-or-abs) 'face 'linum)))
+   (offset-or-abs (if (= offset 0) my-linum-current-line-number offset)))
+    (propertize (format (concat (if (= offset 0) "%-" "%") my-linum-format-suffix) offset-or-abs) 'face 
+      '(:foreground "#33AAFF" :background "gray15"))))
+;;the above denotes the foreground and background colour for the linum numbers on the left.
+;;;Example colours -
+;;(insert (propertize "bar" 'face '(:foreground "red")))
+;;(insert (propertize "bar" 'face '(:background "gray30")))
+;;(insert (propertize "bar" 'face '(:foreground "#33AAFF")))
+;;(insert (propertize "bar" 'face '(:foreground "orange" :background "purple")))
 
 (defadvice linum-update (around my-linum-update)
   (let ((my-linum-current-line-number (line-number-at-pos)))
@@ -341,7 +372,8 @@
  '(rainbow-delimiters-depth-6-face ((t (:foreground "red1"))))
  '(rainbow-delimiters-depth-7-face ((t (:foreground "VioletRed3"))))
  '(rainbow-delimiters-depth-8-face ((t (:foreground "navajo white"))))
- '(rainbow-delimiters-depth-9-face ((t (:foreground "dark slate gray")))))
+ '(rainbow-delimiters-depth-9-face ((t (:foreground "dark slate gray"))))
+ '(show-paren-match ((t (:background "gray20"))))) ;;paren matching is gray rather than ugly ugly blue
 
 
 ;;UNCOMMENT BELOW FOR PRETTY COLOURS MODE!

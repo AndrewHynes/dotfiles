@@ -14,6 +14,8 @@ alias lt='tree -L 1'
 
 alias lt2='tree -L 2'
 
+alias Syu="sudo pacman -Syu"
+
 alias bat="acpi"
 
 alias eclipse='knife eclipse -vmargs -Dorg.eclipse.swt.browser.DefaultType=mozilla'
@@ -24,7 +26,7 @@ alias cal='vim -c :Calendar'
 
 alias pagan='calendar -A 365 -f /usr/share/calendar/calendar.pagan'
 
-#eval 'opam config env'
+alias vmmodules="sudo modprobe -a vboxdrv vboxnetadp vboxnetflt"
 
 alias scrotum='scrot -d 3'
 
