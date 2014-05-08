@@ -26,9 +26,6 @@
 ;;Can now see keystrokes as you're typing them...
 (setq echo-keystrokes 0.1)
 
-;;Loads up my self-made E-prime mode
-(require 'eprime-mode)
-
 ;;;;using EMMS as a music player - https://www.gnu.org/software/emms/
 ;;Setup
 (require 'emms-setup)
