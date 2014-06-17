@@ -29,13 +29,17 @@
 ;;;;using EMMS as a music player - https://www.gnu.org/software/emms/
 ;;Setup
 (require 'emms-setup)
+(require 'emms-player-mplayer)
 (emms-all)
 (emms-default-players)
+;;Allowing emms to be able to execute mplayer
+(setq exec-path (append exec-path '("/usr/bin")))
 (define-emms-simple-player mplayer '(file url)
       (regexp-opt '(".ogg" ".mp3" ".wav" ".mpg" ".mpeg" ".wmv" ".wma"
                     ".mov" ".avi" ".divx" ".ogm" ".asf" ".mkv" "http://" "mms://"
                     ".rm" ".rmvb" ".mp4" ".flac" ".vob" ".m4a" ".flv" ".ogv" ".pls"))
       "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")
+(push 'emms-player-mplayer emms-player-list)
 (emms-add-directory-tree "~/Music/")
 (emms-shuffle)
 ;;Keybindings - NOW GLOBAL thanks to xbindkeys
@@ -63,11 +67,11 @@
               (ptot (format  "%s - %s [%02d:%02d]" art tit (/ ptot 60) (% ptot 60)))
               (t (emms-track-simple-description track))))))
 
-;For some reason, this breaks the above but it was included in the website
-;I got the above off so I'm leaving it here for good measure
-;(setq emms-track-description-function 'emms-info-track-description)
+;;For some reason, this breaks the above but it was included in the website
+;;I got the above off so I'm leaving it here for good measure
+;;(setq emms-track-description-function 'emms-info-track-description)
 
-;for better integration with printing externally
+;;for better integration with printing externally
 (defun emms-no-show ()
   "Modified the original emms-show from http://git.savannah.gnu.org/cgit/emms.git/tree/lisp/emms.el
   will return the song name without printing in minibuffer (for querying purposes).
@@ -175,32 +179,12 @@
 (global-set-key [f6] 'tuareg-eval-buffer)
 
 ;; stuff pertaining to Merlin
-;; ~-> Commented out as Merlin is not installed on this system <-~
-;(push
-;(concat (substring (shell-command-to-string "opam config var share") 0 -1) "/emacs/site-lisp") load-path)
-;(setq merlin-command (concat (substring (shell-command-to-string "opam config var bin") 0 -1) "/ocamlmerlin"))
-;(autoload 'merlin-mode "merlin" "Merlin mode" t)
-;(add-hook 'tuareg-mode-hook 'merlin-mode)
-;(add-hook 'caml-mode-hook 'merlin-mode)
-
-(defun to-ocaml-list ()
-  "Turns a buffer full of strings into an OCaml compatable
-   list of strings."
-  (interactive) ;means I can M-x it
-  (set-mark-command nil)
-  (goto-char (point-min))
-  (insert "[\n") ;note - this goes forward a line
-  (defun helper ()
-    (if (not (= (line-number-at-pos) 2))
-      (insert ";"))
-    (insert "\"")
-    (end-of-line)
-    (insert "\"")
-    (forward-line)
-    (if (not (eobp)) ;end of buffer predicate
-	(helper)))
-  (helper) (insert "]")
-  (set-mark-command t))
+;; (push
+;; (concat (substring (shell-command-to-string "opam config var share") 0 -1) "/emacs/site-lisp") load-path)
+;; (setq merlin-command (concat (substring (shell-command-to-string "opam config var bin") 0 -1) "/ocamlmerlin"))
+;; (autoload 'merlin-mode "merlin" "Merlin mode" t)
+;; (add-hook 'tuareg-mode-hook 'merlin-mode)
+;; (add-hook 'caml-mode-hook 'merlin-mode)
 
 ;EVIL mode
 ;(require 'evil)
@@ -276,8 +260,6 @@
 				("\\.pl\\'" . prolog-mode))
 			      auto-mode-alist))
 
-;;I may need this - http://emacs-fu.blogspot.co.uk/2009/10/writing-presentations-with-org-mode-and.html
-
 ;;;Author's GitHub package link - https://github.com/trillioneyes/pretty-colors-mode
 ;;PRETTY COLORS MODE START
 (eval-when-compile (require 'rainbow-delimiters))
@@ -343,6 +325,53 @@
 
 (provide 'pretty-colors)
 ;;PRETTY COLORS MODE END
+
+;;;;MY CUSTOM EMACS FUNCTIONS THAT DON'T FIT ANYWHERE ELSE START
+(defun diff ()
+  "Removes non-unique lines from a buffer."
+  (interactive)
+  (let ((end-of-this-file (point-max)))
+    (save-excursion
+      (goto-char (point-min))
+      (while (< (point) end-of-this-file)
+	(let ((line (buffer-substring-no-properties 
+		     (line-beginning-position) (line-end-position)))
+	      (line-start-pos (line-beginning-position)))
+	  (forward-line 1)
+	  (let ((unique t))
+	    (save-excursion
+	      (goto-char (point-min))
+	      (while (< (point) end-of-this-file)
+		(let ((currentline (buffer-substring-no-properties 
+				    (line-beginning-position) (line-end-position))))
+		  (when (string= line currentline)
+		    (when (not (= line-start-pos (line-beginning-position))) (setf unique nil)))
+		  (forward-line 1))))
+	    (when unique
+	      (save-excursion (goto-char (point-max))
+			      (insert line)
+			      (newline)))))))
+    (delete-region (point-min) end-of-this-file)))
+
+
+(defun to-ocaml-list ()
+  "Turns a buffer full of strings into an OCaml compatable
+   list of strings."
+  (interactive)
+  (save-excursion
+  (goto-char (point-min))
+  (insert "[\n")
+  (while (not (eobp))
+    (if (not (= (line-number-at-pos) 2))
+	(insert ";"))
+    (insert "\"")
+    (end-of-line)
+    (insert "\"")
+    (forward-line))
+  (insert "]")))
+
+
+;;;;MY CUSTOM EMACS FUNCTIONS THAT DON'T FIT ANYWHERE ELSE END
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

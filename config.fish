@@ -16,6 +16,10 @@ alias lt2='tree -L 2'
 
 alias Syu="sudo pacman -Syu"
 
+alias Ayu="sudo aura -Ayu"
+
+alias Su="sudo pacman -Su"
+
 alias bat="acpi"
 
 alias eclipse='knife eclipse -vmargs -Dorg.eclipse.swt.browser.DefaultType=mozilla'
@@ -42,7 +46,8 @@ alias dl-audio="youtube-dl -x --audio-format "mp3" -o '/home/andrew/Music/%(titl
 
 alias clip="xclip -se c"
 
-alias popcorntime="Popcorn-Time"
+alias virtualbox="VirtualBox"
+#seriously, who even capitalises executables?
 
 alias lsd="ls | lolcat"
 

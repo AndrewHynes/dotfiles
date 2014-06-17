@@ -14,6 +14,9 @@ fi
 setxkbmap -layout gb -option 'ctrl:nocaps'
 #English layout, with caps lock as second control
 
+#Colemak English -
+#setxkbmap -layout gb -variant colemak
+
 xclip &
 
 xbindkeys

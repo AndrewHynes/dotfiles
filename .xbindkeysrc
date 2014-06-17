@@ -40,6 +40,9 @@
 "scrot"
     Print
 
+"scrot -s"
+    Shift + Print
+
 "emacsclient -e '(emms-start)'"
     KP_Multiply
 
