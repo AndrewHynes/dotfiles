@@ -20,7 +20,11 @@ alias Ayu="sudo aura -Ayu"
 
 alias Su="sudo pacman -Su"
 
+alias Au="sudo aura -Au"
+
 alias bat="acpi"
+
+alias countfiles="find . -type f | wc -l"
 
 alias eclipse='knife eclipse -vmargs -Dorg.eclipse.swt.browser.DefaultType=mozilla'
 
@@ -102,5 +106,3 @@ if status --is-login
 end
 
 set fish_greeting ""
-
-fortune -a

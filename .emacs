@@ -162,7 +162,8 @@
                                                "backups"))))
 
 ;;escape is now quit/stop (what C-g is)
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(define-key isearch-mode-map [escape] 'isearch-abort)   ;; for isearch
+(global-set-key [escape] 'keyboard-escape-quit)         ;; everywhere else
 
 ;;uniquifies file names
 (require 'uniquify)
@@ -201,11 +202,6 @@
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
-(require 'package)
-(add-to-list 'package-archives 
-	     '("marmalade" .
-	       "http://marmalade-repo.org/packages/"))
-(package-initialize)
 
 ;;Agda
 (load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
@@ -259,72 +255,6 @@
 				("\\.rkt\\'" . scheme-mode)
 				("\\.pl\\'" . prolog-mode))
 			      auto-mode-alist))
-
-;;;Author's GitHub package link - https://github.com/trillioneyes/pretty-colors-mode
-;;PRETTY COLORS MODE START
-(eval-when-compile (require 'rainbow-delimiters))
-
-(defvar rainbow-delimiters-faces-list
-  '("rainbow-delimiters-depth-1-face"
-    "rainbow-delimiters-depth-2-face"
-    "rainbow-delimiters-depth-3-face"
-    "rainbow-delimiters-depth-4-face"
-    "rainbow-delimiters-depth-5-face"
-    "rainbow-delimiters-depth-6-face"
-    "rainbow-delimiters-depth-7-face"
-    "rainbow-delimiters-depth-8-face"
-    "rainbow-delimiters-depth-9-face"))
-(defvar pretty-colors-open-delims '(?\( ?\[ ?\{))
-(defvar pretty-colors-close-delims '(?\) ?\] ?\}))
-
-(defun depth-from-base (loc base base-depth)
-  (+ (car (parse-partial-sexp base loc)) base-depth))
-
-(defun pretty-colors-colorize-region (start end)
-  (interactive "r")
-  (save-excursion
-    (with-silent-modifications
-      (pretty-colors-uncolorize-region start end)
-      (font-lock-fontify-region start end)
-      (goto-char start)
-      (let ((start-depth (rainbow-delimiters-depth (point))))
-	(while (< (point) end)
-	  (let ((depth (depth-from-base (point) start start-depth)))
-	    (when (and (memq (char-after (point)) pretty-colors-open-delims)
-		       (not (rainbow-delimiters-char-ineligible-p (point))))
-	      (setq depth (1+ depth)))
-	    (unless (and (not (get-text-property (point) 'pretty-color))
-			 (or (and (get-text-property (point) 'font-lock-face))
-			     (get-text-property (point) 'face)))
-	      (add-text-properties
-	       (point) (1+ (point))
-	       `(font-lock-face ,(rainbow-delimiters-depth-face
-				  depth)
-				pretty-color t))))
-	  (setf (point) (1+ (point))))))))
-
-(defun pretty-colors-uncolorize-region (start end)
-  (save-excursion
-    (with-silent-modifications
-      (remove-text-properties start end
-                              '(font-lock-face rainbow
-                                               pretty-color t)))))
-
-(define-minor-mode pretty-colors-mode
-  "Highlight parenthesis-like delimiters and their contents according to their depth."
-  nil "" nil
-  (if (not pretty-colors-mode)
-      (progn
-        (jit-lock-unregister 'pretty-colors-colorize-region)
-        (pretty-colors-uncolorize-region (point-min) (point-max)))
-    (rainbow-delimiters-mode-disable) ; ironically, rainbow-delimiters gets
-					; in the way
-    (jit-lock-register 'pretty-colors-colorize-region t)
-					;(pretty-colors-colorize-region (point-min) (point-max))
-    ))
-
-(provide 'pretty-colors)
-;;PRETTY COLORS MODE END
 
 ;;;;MY CUSTOM EMACS FUNCTIONS THAT DON'T FIT ANYWHERE ELSE START
 (defun diff ()
@@ -382,6 +312,7 @@
  '(exec-path (quote ("/home/andrew/.opam/system/bin" "/home/andrew/.opam/system/bin" "/usr/lib/lightdm/lightdm" "/usr/local/sbin" "/usr/local/bin" "/usr/sbin" "/usr/bin" "/sbin" "/bin" "/usr/games" "/usr/local/games" "/usr/lib/emacs/24.2/x86_64-linux-gnu" "/home/andrew/.cabal/bin")))
  '(haskell-mode-hook (quote (turn-on-haskell-simple-indent)))
  '(send-mail-function (quote smtpmail-send-it)))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -401,11 +332,3 @@
  '(rainbow-delimiters-depth-9-face ((t (:foreground "dark slate gray"))))
  '(show-paren-match ((t (:background "gray20"))))) ;;paren matching is gray rather than ugly ugly blue
 
-
-;;UNCOMMENT BELOW FOR PRETTY COLOURS MODE!
-;;Off temporarily to examine a bug with C mode and pretty colours.
-;(rainbow-delimiters-mode t)
-;(pretty-colors-mode t)
-
-;(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-;(add-hook 'prog-mode-hook 'pretty-colors-mode)
