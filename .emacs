@@ -42,6 +42,17 @@
 (push 'emms-player-mplayer emms-player-list)
 (emms-add-directory-tree "~/Music/")
 (emms-shuffle)
+
+;;Use the below to play some album continuously
+;;TODO - make an ido guessing function for albums
+;;(emms-play-directory-tree "~/Music/AnjunabeatsVol11")
+
+(defun reshuffle () 
+  (interactive)
+  (emms-playlist-clear)
+  (emms-add-directory-tree "~/Music/")
+  (emms-shuffle))
+
 ;;Keybindings - NOW GLOBAL thanks to xbindkeys
 ;;These are kept here in case I ever want to de-globalify
 ;(global-set-key (kbd "<kp-subtract>") 'emms-previous)

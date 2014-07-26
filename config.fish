@@ -16,11 +16,11 @@ alias lt2='tree -L 2'
 
 alias Syu="sudo pacman -Syu"
 
-alias Ayu="sudo aura -Ayu"
+alias Ayu="sudo aura -Axyu"
 
 alias Su="sudo pacman -Su"
 
-alias Au="sudo aura -Au"
+alias Au="sudo aura -Axu"
 
 alias bat="acpi"
 
@@ -29,6 +29,8 @@ alias countfiles="find . -type f | wc -l"
 alias eclipse='knife eclipse -vmargs -Dorg.eclipse.swt.browser.DefaultType=mozilla'
 
 alias define='dict'
+
+alias localip="ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'"
 
 alias cal='vim -c :Calendar'
 

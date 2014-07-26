@@ -11,11 +11,11 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
   unset f
 fi
 
-setxkbmap -layout gb -option 'ctrl:nocaps'
+#setxkbmap -layout gb -option 'ctrl:nocaps'
 #English layout, with caps lock as second control
 
 #Colemak English -
-#setxkbmap -layout gb -variant colemak
+setxkbmap -layout gb -variant colemak
 
 xclip &
 
