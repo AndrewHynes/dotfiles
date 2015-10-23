@@ -296,7 +296,7 @@
 
 
 (defun to-ocaml-list ()
-  "Turns a buffer full of strings into an OCaml compatable
+  "Turns a buffer full of strings into an OCaml compatible
    list of strings."
   (interactive)
   (save-excursion
