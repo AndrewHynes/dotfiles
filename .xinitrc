@@ -19,6 +19,10 @@ setxkbmap -layout gb -variant colemak
 
 xclip &
 
+udiskie &
+
+xset b off
+
 xbindkeys
 
 #emacs as a daemon is now properly managed by systemd

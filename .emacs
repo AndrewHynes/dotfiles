@@ -8,14 +8,14 @@
 ;; ; (next-line)     C-n <- C-j is (newline-and-indent)
 ;; ; (previous-line) C-p <- C-k is (kill-line)
 ;; ; (forward-char)  C-f <- C-l is (recenter-top-bottom)
-(global-set-key "\C-b" 'help-command)
-(global-set-key "\C-n" 'newline-and-indent)
-(global-set-key "\C-p" 'kill-line)
-(global-set-key "\C-f" 'recenter-top-bottom)
-(global-set-key "\C-h" 'backward-char)
-(global-set-key "\C-j" 'next-line)
-(global-set-key "\C-k" 'previous-line)
-(global-set-key "\C-l" 'forward-char)
+;; (global-set-key "\C-b" 'help-command)
+;; (global-set-key "\C-n" 'newline-and-indent)
+;; (global-set-key "\C-p" 'kill-line)
+;; (global-set-key "\C-f" 'recenter-top-bottom)
+;; (global-set-key "\C-h" 'backward-char)
+;; (global-set-key "\C-j" 'next-line)
+;; (global-set-key "\C-k" 'previous-line)
+;; (global-set-key "\C-l" 'forward-char)
 
 ;; turns control shift F into format buffer -
 (global-set-key (kbd "C-F") #'(lambda () (interactive) (indent-region (point-min) (point-max))))
@@ -121,7 +121,7 @@
 (setq inhibit-startup-message t)
 
 ;;LaTeX style \ commands
-(set-input-method 'TeX)
+;;(set-input-method 'TeX)
 ;;note, to change back, do
 ;;M-x set-input-method RET british
 ;;for some reason, "english" assumes Dvorak
@@ -198,10 +198,18 @@
 ;; (add-hook 'tuareg-mode-hook 'merlin-mode)
 ;; (add-hook 'caml-mode-hook 'merlin-mode)
 
+
+;;;Haskell things
+(add-hook 'haskell-mode-hook 'inf-haskell-mode)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;;(add-hook 'haskell-mode-hook 'structured-haskell-mode)
+
 ;EVIL mode
 ;(require 'evil)
 ;(setq evil-cross-lines t)
 ;(evil-mode 1)
+
+
 
 ;;sensible copy/paste keys
 (cua-mode t)
@@ -214,8 +222,14 @@
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 
+
+
+;; Mentor: an rTorrent front-end
+;;(require 'mentor)
+(setq mentor-rtorrent-url "scgi://127.0.0.1:5000")
+
 ;;Agda
-(load-file "/home/andrew/.cabal/share/x86_64-linux-ghc-7.6.3/Agda-2.3.2.2/emacs-mode/agda2.el")
+;;goes here
 ;;To make use of the Agda standard library, add /usr/lib/agda to the Agda search path, either using the --include-path flag 
 ;;or by customising the Emacs mode variable agda2-include-dirs (M-x customize-group RET agda2 RET).
 
@@ -311,17 +325,56 @@
     (forward-line))
   (insert "]")))
 
+(defun lennyAgda ()
+  "Inserts （ٜ͡°ٜ͜ʖٜ͡°） into a buffer."
+  (interactive)
+  (insert "（ٜ͡°ٜ͜ʖٜ͡°）"))
+(defun lennyAgda2 ()
+  "Inserts ❨ٜ͡°ٜ͜ʖٜ͡°❩ into a buffer."
+  (interactive)
+  (insert "❨ٜ͡°ٜ͜ʖٜ͡°❩"))
+(defun lennyAgda3 ()
+  "Inserts ⦅ٜ͡°ٜ͜ʖٜ͡°⦆into a buffer."
+  (interactive)
+  (insert "⦅ٜ͡°ٜ͜ʖٜ͡°⦆"))
+
 
 ;;;;MY CUSTOM EMACS FUNCTIONS THAT DON'T FIT ANYWHERE ELSE END
+
+
+;;; Org Mode Things
+(require 'ox-latex)
+(setq org-latex-listings 'minted)
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+
+(add-to-list 'org-latex-classes
+             '("beamer"
+               "\\documentclass\[presentation\]\{beamer\}"
+               ("\\section\{%s\}" . "\\section*\{%s\}")
+               ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
+               ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-include-dirs (quote ("/usr/lib/agda .")))
- '(exec-path (quote ("/home/andrew/.opam/system/bin" "/home/andrew/.opam/system/bin" "/usr/lib/lightdm/lightdm" "/usr/local/sbin" "/usr/local/bin" "/usr/sbin" "/usr/bin" "/sbin" "/bin" "/usr/games" "/usr/local/games" "/usr/lib/emacs/24.2/x86_64-linux-gnu" "/home/andrew/.cabal/bin")))
- '(haskell-mode-hook (quote (turn-on-haskell-simple-indent)))
+ '(agda2-include-dirs (quote ("/usr/lib/agda-stdlib/" ".")))
+ '(exec-path
+   (quote
+    ("/home/andrew/.opam/system/bin" "/home/andrew/.opam/system/bin" "/usr/lib/lightdm/lightdm" "/usr/local/sbin" "/usr/local/bin" "/usr/sbin" "/usr/bin" "/sbin" "/bin" "/usr/games" "/usr/local/games" "/usr/lib/emacs/24.2/x86_64-linux-gnu" "/home/andrew/.cabal/bin")))
+ '(haskell-mode-hook (quote (turn-on-haskell-simple-indent)) t)
+ '(org-babel-load-languages
+   (quote
+    ((emacs-lisp . t)
+     (python . t)
+     (ocaml . t)
+     (haskell . t)
+     (C . t))))
+ '(org-latex-pdf-process
+   (quote
+    ("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+ '(org-support-shift-select t)
  '(send-mail-function (quote smtpmail-send-it)))
 
 (custom-set-faces
@@ -329,6 +382,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(agda2-highlight-datatype-face ((t (:background "tan" :foreground "medium blue"))))
+ '(agda2-highlight-function-face ((t (:background "tan" :foreground "medium blue"))))
+ '(agda2-highlight-postulate-face ((t (:background "tan" :foreground "medium blue"))))
+ '(agda2-highlight-primitive-face ((t (:background "tan" :foreground "medium blue"))))
+ '(agda2-highlight-primitive-type-face ((t (:background "tan" :foreground "medium blue"))))
+ '(agda2-highlight-record-face ((t (:background "tan" :foreground "medium blue"))))
  '(mode-line ((t (:foreground "white"))))
  '(mode-line-highlight ((t nil)))
  '(mode-line-inactive ((t (:inherit mode-line :foreground "dim gray" :weight light))))
@@ -341,5 +400,9 @@
  '(rainbow-delimiters-depth-7-face ((t (:foreground "VioletRed3"))))
  '(rainbow-delimiters-depth-8-face ((t (:foreground "navajo white"))))
  '(rainbow-delimiters-depth-9-face ((t (:foreground "dark slate gray"))))
- '(show-paren-match ((t (:background "gray20"))))) ;;paren matching is gray rather than ugly ugly blue
+ '(show-paren-match ((t (:background "gray20")))))
+ ;;paren matching is gray rather than ugly ugly blue
 
+
+(load-file (let ((coding-system-for-read 'utf-8))
+                (shell-command-to-string "agda-mode locate")))
